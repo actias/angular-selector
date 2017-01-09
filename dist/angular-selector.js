@@ -512,13 +512,27 @@
 				}, true);
 				
 				// DOM event listeners
+				scope.preventClose = false;
+				
 				input = angular.element(element[0].querySelector('.selector-input input'))
 					.on('focus', function () {
+						
+						if(scope.preventClose) {
+							scope.preventClose = false;
+							return;
+						}
+						
 						$timeout(function () {
 							scope.$apply(scope.open);
 						});
 					})
 					.on('blur', function () {
+						
+						if(scope.preventClose) {
+							input.focus();
+							return;
+						}
+						
 						scope.$apply(scope.close);
 					})
 					.on('keydown', function (e) {
@@ -531,6 +545,7 @@
 					});
 				dropdown
 					.on('mousedown', function (e) {
+						scope.preventClose = true;
 						e.preventDefault();
 					});
 				angular.element($window)
